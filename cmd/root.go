@@ -1,16 +1,15 @@
 package cmd
 
 import (
+	"encoding/json"
 	"fmt"
-	"log"
-	"os"
-	"path/filepath"
-	"strings"
-
 	"github.com/gdamore/tcell/v2"
 	"github.com/mitchellh/go-homedir"
 	"github.com/rivo/tview"
 	"github.com/spf13/cobra"
+	"log"
+	"os"
+	"path/filepath"
 )
 
 var (
@@ -24,11 +23,16 @@ var rootCmd = &cobra.Command{
 	Run:     run,
 }
 
+type Copy struct {
+	Date string `json:"date"`
+	Copy string `json:"copy"`
+}
+
 var clipboardHistoryFile = "~/.clipboard/history"
-var clipboardHistory []string
+var clipboardHistory []Copy
 
 func init() {
-	clipboardHistory = []string{}
+	clipboardHistory = []Copy{}
 }
 
 func run(cmd *cobra.Command, args []string) {
@@ -57,7 +61,8 @@ func run(cmd *cobra.Command, args []string) {
 	clipboardList.SetBorder(true)
 
 	for i, item := range clipboardHistory {
-		clipboardList.SetCellSimple(i+1, 0, item)
+		clipboardList.SetCellSimple(i+1, 0, item.Date)
+		clipboardList.SetCellSimple(i+1, 1, item.Copy)
 	}
 
 	if e := app.SetRoot(clipboardList, true).SetFocus(clipboardList).Run(); e != nil {
@@ -87,11 +92,10 @@ func loadClipboardHistoryFromFile(clipboardHistoryFile string) {
 		log.Printf("Error reading clipboard history file: %v\n", err)
 		return
 	}
-	lines := strings.Split(string(data), "\n")
-	for _, line := range lines {
-		if line != "" {
-			clipboardHistory = append(clipboardHistory, line)
-		}
+	err = json.Unmarshal(data, &clipboardHistory)
+	if err != nil {
+		log.Printf("Error unmarshaling clipboard history file: %v\n", err)
+		return
 	}
 }
 
