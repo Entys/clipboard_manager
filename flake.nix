@@ -20,8 +20,6 @@
           pname = "clipboard";
           inherit version;
           src = ./.;
-          ldflags = ["-s" "-w" "-X github.com/quantumsheep/sshs/cmd.Version=${version}"];
-          vendorSha256 = "OCh37wjSs40Q0VQmoc1nXQ4nWddnoUCrI5xgxpxR/Ec=";
         };
       }
     );
