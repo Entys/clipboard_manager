@@ -9,6 +9,7 @@ import (
 	"github.com/spf13/cobra"
 	"log"
 	"os"
+	"os/exec"
 	"path/filepath"
 )
 
@@ -64,7 +65,22 @@ func run(cmd *cobra.Command, args []string) {
 		clipboardList.SetCellSimple(i+1, 0, item.Date)
 		clipboardList.SetCellSimple(i+1, 2, item.Copy)
 	}
+	clipboardList.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
+		switch event.Key() {
+		case tcell.KeyEnter:
+			row, _ := clipboardList.GetSelection()
+			if row == 0 {
+				return nil
+			}
+			text := clipboardList.GetCell(row, 2).Text
+			err := exec.Command("wl-copy", text).Run()
+			if err != nil {
+				return nil
+			}
+		}
 
+		return event
+	})
 	if e := app.SetRoot(clipboardList, true).SetFocus(clipboardList).Run(); e != nil {
 		panic(e)
 	}
