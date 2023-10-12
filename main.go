@@ -1,8 +1,6 @@
 package main
 
-import (
-	"github.com/quantumsheep/sshs/cmd"
-)
+import "github.com/Entys/clipboard_manager/cmd"
 
 func main() {
 	cmd.Execute()

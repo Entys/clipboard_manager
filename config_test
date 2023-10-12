@@ -1,5 +1,0 @@
-Host Test
-    HostName entyscoco.ovh
-    User Entys
-    Port 22
-    Alias worldTest

@@ -2,12 +2,12 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/gdamore/tcell/v2"
 	"log"
 	"os"
 	"path/filepath"
 	"strings"
 
+	"github.com/gdamore/tcell/v2"
 	"github.com/mitchellh/go-homedir"
 	"github.com/rivo/tview"
 	"github.com/spf13/cobra"

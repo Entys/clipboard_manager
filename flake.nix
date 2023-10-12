@@ -1,5 +1,5 @@
 {
-  description = "Terminal user interface for SSH";
+  description = "Clipboard manager for NixOS";
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
@@ -17,7 +17,7 @@
         pkgs = nixpkgs.legacyPackages.${system};
       in rec {
         packages.default = pkgs.buildGoModule {
-          pname = "sshs";
+          pname = "clipboard";
           inherit version;
           src = ./.;
           ldflags = ["-s" "-w" "-X github.com/quantumsheep/sshs/cmd.Version=${version}"];

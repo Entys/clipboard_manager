@@ -2,7 +2,7 @@ VERSION ?= $$(git describe --tags 2>/dev/null || git rev-parse --short HEAD 2>/d
 LEVEL ?= release
 OUTPUT ?= sshs$$(if [ "$${GOOS:-$$(go env GOOS)}" == "windows" ]; then echo '.exe'; else echo ''; fi)
 
-GO_PACKAGE_PATH := github.com/quantumsheep/sshs
+GO_PACKAGE_PATH := github.com/Entys/clipboard_manager
 
 ifeq ($(LEVEL),release)
 GOLDFLAGS := -w -s
@@ -12,16 +12,16 @@ build:
 	go build -ldflags "$(GOLDFLAGS) -X '$(GO_PACKAGE_PATH)/cmd.Version=$(or $(strip $(VERSION)),latest)'" -o $(OUTPUT)
 
 clean:
-	rm -f sshs
+	rm -f clipboard
 
 PREFIX ?= /usr/local
 
-install: sshs
+install: clipboard
 	mkdir -p $(DESTDIR)$(PREFIX)/bin
-	cp $< $(DESTDIR)$(PREFIX)/bin/sshs
+	cp $< $(DESTDIR)$(PREFIX)/bin/clipboard
 
 uninstall:
-	rm -f $(DESTDIR)$(PREFIX)/bin/sshs
+	rm -f $(DESTDIR)$(PREFIX)/bin/clipboard
 
 default: build
 
