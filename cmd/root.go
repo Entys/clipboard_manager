@@ -11,10 +11,13 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
+	"time"
 )
 
 var (
-	Version string
+	Version    string
+	daemonFlag bool
 )
 
 var rootCmd = &cobra.Command{
@@ -34,9 +37,56 @@ var clipboardHistory []Copy
 
 func init() {
 	clipboardHistory = []Copy{}
+	rootCmd.Flags().BoolVar(&daemonFlag, "daemon", false, "Run as a daemon")
+}
+
+func saveClipboardHistoryToFile(filename string, history []Copy) {
+	data, err := json.Marshal(history)
+	if err != nil {
+		log.Printf("Error marshaling clipboard history: %v\n", err)
+		return
+	}
+
+	err = os.WriteFile(filename, data, 0644)
+	if err != nil {
+		log.Printf("Error writing clipboard history to file: %v\n", err)
+	}
+}
+
+func checkClipboardChanges() {
+	cmd := exec.Command("wl-paste")
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		log.Printf("Error reading clipboard with wl-paste: %v\n", err)
+		return
+	}
+
+	currentClipboardContent := strings.TrimSpace(string(output))
+
+	if len(clipboardHistory) > 0 && currentClipboardContent == clipboardHistory[0].Copy {
+		return
+	}
+
+	newEntry := Copy{
+		Date: time.Now().Format("2006-01-02 15:04:05"),
+		Copy: currentClipboardContent,
+	}
+
+	clipboardHistory = append([]Copy{newEntry}, clipboardHistory...)
+
+	saveClipboardHistoryToFile(clipboardHistoryFile, clipboardHistory)
 }
 
 func run(cmd *cobra.Command, args []string) {
+
+	if daemonFlag {
+		for {
+			checkClipboardChanges()
+			time.Sleep(2 * time.Second)
+		}
+		return
+	}
+
 	clipboardHistoryFile, e := homedir.Expand(clipboardHistoryFile)
 	if e != nil {
 		log.Fatal(e)
@@ -53,7 +103,8 @@ func run(cmd *cobra.Command, args []string) {
 	loadClipboardHistoryFromFile(clipboardHistoryFile)
 
 	clipboardList := tview.NewTable().SetSelectable(true, false)
-	clipboardList.SetSelectedStyle(tcell.StyleDefault.Foreground(tcell.ColorWhite).Background(tcell.ColorBlue))
+	clipboardList.SetBackgroundColor(tcell.ColorReset)
+	clipboardList.SetSelectedStyle(tcell.StyleDefault.Foreground(tcell.ColorBlack).Background(tcell.ColorBlue))
 
 	timeOfCopyStyle := tcell.StyleDefault.Foreground(tcell.ColorYellow)
 	messageCopiedStyle := tcell.StyleDefault.Foreground(tcell.ColorBlue)
