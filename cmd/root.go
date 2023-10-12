@@ -55,14 +55,14 @@ func run(cmd *cobra.Command, args []string) {
 	clipboardList.SetSelectedStyle(tcell.StyleDefault.Foreground(tcell.ColorWhite).Background(tcell.ColorBlue))
 
 	clipboardList.SetCell(0, 0, tview.NewTableCell("Time of Copy").SetAlign(tview.AlignCenter))
-	clipboardList.SetCell(0, 1, tview.NewTableCell("Message Copied").SetAlign(tview.AlignCenter))
+	clipboardList.SetCell(0, 2, tview.NewTableCell("Message Copied").SetAlign(tview.AlignCenter))
 
 	clipboardList.SetTitle("Clipboard History").SetTitleAlign(tview.AlignCenter)
 	clipboardList.SetBorder(true)
 
 	for i, item := range clipboardHistory {
 		clipboardList.SetCellSimple(i+1, 0, item.Date)
-		clipboardList.SetCellSimple(i+1, 1, item.Copy)
+		clipboardList.SetCellSimple(i+1, 2, item.Copy)
 	}
 
 	if e := app.SetRoot(clipboardList, true).SetFocus(clipboardList).Run(); e != nil {
