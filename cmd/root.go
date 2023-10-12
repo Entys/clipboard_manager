@@ -28,7 +28,7 @@ type Copy struct {
 	Copy string `json:"copy"`
 }
 
-var clipboardHistoryFile = "~/.clipboard/history"
+var clipboardHistoryFile = "/tmp/clipboard/history"
 var clipboardHistory []Copy
 
 func init() {
