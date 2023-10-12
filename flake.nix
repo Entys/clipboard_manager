@@ -20,6 +20,8 @@
           pname = "clipboard";
           inherit version;
           src = ./.;
+          #vendorSha256 = pkgs.lib.fakeSha256;
+          vendorHash = "sha256-u93OLlHQwmqKXKTo7J5aCyVurQG+j+v6ES6d713kqvk=";
         };
       }
     );
