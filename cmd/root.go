@@ -55,14 +55,19 @@ func run(cmd *cobra.Command, args []string) {
 	clipboardList := tview.NewTable().SetSelectable(true, false)
 	clipboardList.SetSelectedStyle(tcell.StyleDefault.Foreground(tcell.ColorWhite).Background(tcell.ColorBlue))
 
-	clipboardList.SetCell(0, 0, tview.NewTableCell("Time of Copy").SetAlign(tview.AlignCenter))
-	clipboardList.SetCell(0, 2, tview.NewTableCell("Message Copied").SetAlign(tview.AlignCenter))
+	timeOfCopyStyle := tcell.StyleDefault.Foreground(tcell.ColorYellow)
+	messageCopiedStyle := tcell.StyleDefault.Foreground(tcell.ColorBlue)
+
+	clipboardList.SetCell(0, 0, tview.NewTableCell("Time of Copy").SetAlign(tview.AlignCenter).SetStyle(timeOfCopyStyle))
+	clipboardList.SetCell(0, 1, tview.NewTableCell("|").SetAlign(tview.AlignCenter).SetStyle(tcell.StyleDefault))
+	clipboardList.SetCell(0, 2, tview.NewTableCell("Message Copied").SetAlign(tview.AlignCenter).SetStyle(messageCopiedStyle))
 
 	clipboardList.SetTitle("Clipboard History").SetTitleAlign(tview.AlignCenter)
 	clipboardList.SetBorder(true)
 
 	for i, item := range clipboardHistory {
 		clipboardList.SetCellSimple(i+1, 0, item.Date)
+		clipboardList.SetCellSimple(i+1, 1, "|")
 		clipboardList.SetCellSimple(i+1, 2, item.Copy)
 	}
 	clipboardList.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
